@@ -121,6 +121,15 @@ class TranscribeHelperTests(unittest.TestCase):
             os.utime(photo, (500, 500))
             self.assertTrue(transcribe.already_done(prediction, photo))
 
+    def test_blank_prediction_is_not_done(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            photo = folder / "page.jpg"
+            prediction = folder / "page.txt"
+            photo.write_bytes(b"photo")
+            prediction.write_text("\n", encoding="utf-8")
+            self.assertFalse(transcribe.already_done(prediction, photo))
+
     def test_display_path_keeps_paths_outside_the_repo(self):
         outside = Path("/tmp/handwriting-predictions/page.txt")
         self.assertEqual(transcribe.display_path(outside), str(outside))

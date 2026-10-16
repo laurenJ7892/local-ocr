@@ -53,7 +53,7 @@ A useful first set is 20–30 pages that cover neat and rushed writing, pen and 
 uv run python src/transcribe.py
 ```
 
-The script resizes each photo so the long edge is at most 1600 pixels, then asks the model to copy the handwriting exactly, keep line breaks, leave spelling as written, and mark unreadable words as `[illegible]`. It writes each finished page immediately. A later run skips a page whose prediction is newer than the photo. Replacing the photo causes that page to be transcribed again.
+The script resizes each photo so the long edge is at most 1600 pixels, then asks the model to copy the handwriting exactly, keep line breaks, leave spelling as written, and mark unreadable words as `[illegible]`. It writes each finished page immediately. A blank result is not saved, and the next run tries that page again. A later run skips a page whose prediction contains text and is newer than the photo. Replacing the photo causes that page to be transcribed again.
 
 Run one model with:
 

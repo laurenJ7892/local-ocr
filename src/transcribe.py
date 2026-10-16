@@ -90,8 +90,14 @@ def prediction_path(predictions_dir: Path, slug: str, page: Path) -> Path:
 
 
 def already_done(path: Path, source: Path | None = None) -> bool:
-    """A prediction is current when it is non-empty and newer than the photo."""
-    if not path.is_file() or path.stat().st_size == 0:
+    """A prediction is current when it has text and is newer than the photo."""
+    if not path.is_file():
+        return False
+    try:
+        contents = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return False
+    if not contents.strip():
         return False
     if source is not None and source.stat().st_mtime > path.stat().st_mtime:
         return False
@@ -190,6 +196,10 @@ def run_model(
             if stop.count != started:
                 info(f"{spec['slug']}: discarded {page.name}")
                 return False
+            if not text:
+                dest.unlink(missing_ok=True)
+                info(f"{spec['slug']}: {page.name} produced no text and will be tried again.")
+                continue
             write_output(dest, text + "\n")
             info(f"{spec['slug']}: wrote {display_path(dest)}")
     finally:
